@@ -1,6 +1,7 @@
 package com.javacourse.stormnetbot.dao.config;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -26,6 +27,12 @@ public class ConnectionManager {
         } catch (SQLException e) {
             e.printStackTrace();
             throw new RuntimeException(e);
+        }
+    }
+
+    public static void close(PreparedStatement statement) throws SQLException {
+        if (statement != null) {
+            statement.close();
         }
     }
 }

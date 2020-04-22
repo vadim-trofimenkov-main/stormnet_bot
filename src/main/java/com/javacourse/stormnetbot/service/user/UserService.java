@@ -1,8 +1,8 @@
-package com.javacourse.stormnetbot.dao.user;
+package com.javacourse.stormnetbot.service.user;
 
 import com.javacourse.stormnetbot.shared.entity.User;
 
-public interface UserDao {
+public interface UserService {
     User getUSer(Long chatId);
     void createUser (User user);
 }

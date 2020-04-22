@@ -47,7 +47,7 @@ public class ConnectionPool {
     }
     public Connection take(){
         try{
-            synchronized (available{
+            synchronized (available) {
                 Connection connection = available.take();
                 synchronized (given) {
                 }
