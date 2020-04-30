@@ -11,11 +11,13 @@ public class SessionManager {
     private static final Map<Long, UserSession> USER_SESSION = new HashMap<>();
 
     public static UserSession putSession(Long chatId, User user){
-        UserSession session = USER_SESSION.put(chatId, new UserSession(user));
-        if(session != null){
-            throw new RuntimeException("Session is already defined");
-        }
-        return session;
+        UserSession newSession = new UserSession(user);
+        USER_SESSION.put(chatId, newSession);
+//        UserSession session = USER_SESSION.put(chatId, newSession);
+//        if(session != null){
+//            throw new RuntimeException("Session is already defined");
+//        }
+        return newSession;
     }
     public static UserSession getSession(Long chatId){
         return USER_SESSION.get(chatId);

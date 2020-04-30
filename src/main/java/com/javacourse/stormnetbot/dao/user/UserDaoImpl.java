@@ -3,12 +3,10 @@ package com.javacourse.stormnetbot.dao.user;
 import com.javacourse.stormnetbot.dao.config.ConnectionManager;
 import com.javacourse.stormnetbot.dao.tool.EntityDaoUtil;
 import com.javacourse.stormnetbot.shared.entity.User;
+import com.javacourse.stormnetbot.shared.exception.UserFriendlyException;
 import lombok.SneakyThrows;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class UserDaoImpl implements UserDao {
     private final static String SELECT_USER_BY_CHAT_ID = "SELECT * FROM users WHERE chat_id = ?;";
@@ -31,7 +29,7 @@ public class UserDaoImpl implements UserDao {
         } catch (SQLException e) {
             e.printStackTrace();
             throw new RuntimeException(e);
-        }finally {
+        } finally {
             ConnectionManager.close(statement);
         }
         return null;
@@ -49,11 +47,13 @@ public class UserDaoImpl implements UserDao {
             statement.setString(2, user.getUsername());
             statement.setString(3, user.getStatus());
             statement.executeUpdate();
+        } catch (SQLIntegrityConstraintViolationException e) {
+            throw new UserFriendlyException("This name is already taken");
         } catch (SQLException e) {
             e.printStackTrace();
             throw new RuntimeException(e);
-        }finally {
-            ConnectionManager.close(statement);
+        } finally {
+            ConnectionManager.close(statement, connection);
         }
     }
 }

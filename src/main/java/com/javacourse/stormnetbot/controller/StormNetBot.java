@@ -1,6 +1,11 @@
 package com.javacourse.stormnetbot.controller;
 
+import com.javacourse.stormnetbot.controller.base.SessionManager;
+import com.javacourse.stormnetbot.controller.base.UserSession;
+import com.javacourse.stormnetbot.controller.command.Command;
+import com.javacourse.stormnetbot.controller.command.exception.UnknownCommandException;
 import com.javacourse.stormnetbot.controller.command.tool.ChatUtil;
+import com.javacourse.stormnetbot.controller.constant.CommandNames;
 import com.javacourse.stormnetbot.shared.exception.UserFriendlyException;
 import lombok.SneakyThrows;
 import org.telegram.telegrambots.ApiContextInitializer;
@@ -21,14 +26,37 @@ public class StormNetBot extends TelegramLongPollingBot {
     @Override
     public void onUpdateReceived(Update update) {
         try {
-            Message message = update.getMessage();
-            String text = message.getText();
-            TASK_MANAGER.impl(text, update, this);
+            if (!sessionOk(update)) {
+                Command command = TaskManager.getCommand(CommandNames.START);
+                command.execute(this, update);
+                return;
+            }
+            String input = getInput(update);
+            TASK_MANAGER.impl(input, update, this);
         } catch (UserFriendlyException e) {
-                ChatUtil.sendMessage(e.getMessage(), update, this);
+            e.printStackTrace();
+            ChatUtil.sendMessage(e.getMessage(), update, this);
         } catch (Exception e) {
-                ChatUtil.sendMessage("Server error", update, this);
+            e.printStackTrace();
+            ChatUtil.sendMessage("Server error", update, this);
         }
+    }
+
+    private boolean sessionOk(Update update) {
+        UserSession session = SessionManager.getSession(update);
+        return session != null;
+    }
+
+    private String getInput(Update update) {
+        String input;
+        if (update.hasMessage()) {
+            input = update.getMessage().getText();
+        } else if (update.hasCallbackQuery()) {
+            input = update.getCallbackQuery().getData();
+        } else {
+            throw new UnknownCommandException();
+        }
+        return input;
     }
 
     @Override
@@ -43,10 +71,10 @@ public class StormNetBot extends TelegramLongPollingBot {
 
     public static void main(String[] args) {
         TelegramBotsApi telegramBotsApi = new TelegramBotsApi();
-        try{
+        try {
             StormNetBot stormNetBot = new StormNetBot();
             telegramBotsApi.registerBot(stormNetBot);
-        }catch (TelegramApiException e){
+        } catch (TelegramApiException e) {
             e.printStackTrace();
         }
     }
