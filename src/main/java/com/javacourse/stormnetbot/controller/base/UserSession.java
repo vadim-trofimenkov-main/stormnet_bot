@@ -15,6 +15,7 @@ public class UserSession {
     private User user;
     private Command nextCommand;
     private List<Course> allCourses;
+    private List<User> allUsers;
 
     public UserSession(User user) {
         this.user = user;

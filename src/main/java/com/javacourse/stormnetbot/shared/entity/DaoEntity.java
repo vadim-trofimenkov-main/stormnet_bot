@@ -1,6 +1,6 @@
 package com.javacourse.stormnetbot.shared.entity;
 
-public class DaoEntity {
+public class DaoEntity{
     private Integer id;
 
     public Integer getId() {

@@ -6,8 +6,8 @@ import com.javacourse.stormnetbot.controller.base.UserSession;
 import com.javacourse.stormnetbot.controller.command.Command;
 import com.javacourse.stormnetbot.controller.command.tool.ChatUtil;
 import com.javacourse.stormnetbot.controller.constant.CommandNames;
+import com.javacourse.stormnetbot.shared.entity.security.Role;
 import com.javacourse.stormnetbot.shared.entity.User;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
@@ -19,6 +19,7 @@ import java.util.List;
 public class ShowMainMenuCommand implements Command {
     private static final String ALL_COURSES = "All courses";
     private static final String MY_COURSES = "My courses";
+    private static final String MANAGE_USERS = "Manage users";
 
     @Override
     public void execute(StormNetBot source, Update update) throws TelegramApiException {
@@ -29,13 +30,19 @@ public class ShowMainMenuCommand implements Command {
         List<InlineKeyboardButton> buttons2 = Arrays.asList(
                 new InlineKeyboardButton(ALL_COURSES).setCallbackData(CommandNames.SHOW_ALL_COURSES)
         );
-
         List<List<InlineKeyboardButton>> keyboard = Arrays.asList(buttons1, buttons2);
 
-        InlineKeyboardMarkup markup = new InlineKeyboardMarkup(keyboard);
         Long chatId = ChatUtil.readChatId(update);
         UserSession session = SessionManager.getSession(chatId);
         User user = session.getUser();
+        Role role = user.getRole();
+        if (Role.ADMIN.equals(role)) {
+            keyboard.add(Arrays.asList(new InlineKeyboardButton(MANAGE_USERS).setCallbackData(CommandNames.SHOW_USERS_FOR_ADMIN)));
+        }
+
+
+        InlineKeyboardMarkup markup = new InlineKeyboardMarkup(keyboard);
+
         String message = "Hi, " + user.getUsername();
         ChatUtil.sendMessageWithMarkup(message, update, source, markup);
     }

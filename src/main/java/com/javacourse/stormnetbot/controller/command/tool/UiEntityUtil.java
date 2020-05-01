@@ -1,6 +1,7 @@
 package com.javacourse.stormnetbot.controller.command.tool;
 
 import com.javacourse.stormnetbot.shared.entity.Course;
+import com.javacourse.stormnetbot.shared.entity.User;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -31,6 +32,17 @@ public class UiEntityUtil {
                 .append("\n")
                 .append("Description: ")
                 .append(course.getDescription());
+        return builder.toString();
+    }
+
+    public static String userToString(Collection<User> users){
+        StringBuilder builder = new StringBuilder();
+        for (User user: users) {
+            builder.append(user.getUsername())
+                    .append(" - ")
+                    .append(user.getStatus())
+                    .append("\n");
+        }
         return builder.toString();
     }
 }

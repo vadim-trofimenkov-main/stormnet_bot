@@ -17,6 +17,16 @@ public class EntityDaoUtil {
         return new User(chatId, username, status);
     }
 
+    public static List<User> initUsers(ResultSet rs) throws SQLException {
+        List<User> users = new ArrayList<>();
+        rs.beforeFirst();
+        while(rs.next()){
+            User user = initUser(rs);
+            users.add(user);
+        }
+        return users;
+    }
+
     public static Course initCourseShort(ResultSet resultSet) throws SQLException {
         int id = resultSet.getInt("Id");
         String title = resultSet.getString("title");
@@ -30,7 +40,7 @@ public class EntityDaoUtil {
 
     public static List<Course> initCoursesShort(ResultSet resultSet) throws SQLException {
         List<Course> courses = new ArrayList<>();
-        resultSet.first();
+        resultSet.beforeFirst();
         while (resultSet.next()) {
             Course course = initCourseShort(resultSet);
             courses.add(course);

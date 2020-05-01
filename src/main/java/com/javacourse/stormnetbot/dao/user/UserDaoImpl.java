@@ -7,10 +7,13 @@ import com.javacourse.stormnetbot.shared.exception.UserFriendlyException;
 import lombok.SneakyThrows;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UserDaoImpl implements UserDao {
     private final static String SELECT_USER_BY_CHAT_ID = "SELECT * FROM users WHERE chat_id = ?;";
     private final static String CREATE_USER = "INSERT INTO users(chat_id, username, status) VALUES( ?, ?, ?);";
+    private final static String SELECT_ALL_USERS = "SELECT * FROM users";
 
     @SneakyThrows
     @Override
@@ -49,6 +52,25 @@ public class UserDaoImpl implements UserDao {
             statement.executeUpdate();
         } catch (SQLIntegrityConstraintViolationException e) {
             throw new UserFriendlyException("This name is already taken");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        } finally {
+            ConnectionManager.close(statement, connection);
+        }
+    }
+
+    @SneakyThrows
+    @Override
+    public List<User> getAllUsers() {
+        Connection connection = null;
+        Statement statement = null;
+        try {
+            connection = ConnectionManager.take();
+            statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(SELECT_ALL_USERS);
+            List<User> users = EntityDaoUtil.initUsers(resultSet);
+            return users;
         } catch (SQLException e) {
             e.printStackTrace();
             throw new RuntimeException(e);

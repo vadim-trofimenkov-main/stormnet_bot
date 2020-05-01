@@ -16,7 +16,7 @@ public class CourseDaoImpl implements CourseDao {
     @Override
     public List<Course> getAllCoursesShort() {
         List<Course> courses;
-        Connection connection;
+        Connection connection = null;
         Statement statement = null;
         try {
             connection = ConnectionManager.take();
@@ -24,9 +24,10 @@ public class CourseDaoImpl implements CourseDao {
             ResultSet resultSet = statement.executeQuery(SELECT_ALL_COURSES);
             courses = EntityDaoUtil.initCoursesShort(resultSet);
         } catch (SQLException e) {
-            ConnectionManager.close(statement,connection);
             e.printStackTrace();
             throw new RuntimeException(e);
+        }finally {
+            ConnectionManager.close(statement,connection);
         }
         return courses;
     }
@@ -45,9 +46,10 @@ public class CourseDaoImpl implements CourseDao {
             resultSet.next();
             course = EntityDaoUtil.initCourse(resultSet);
         } catch (SQLException e) {
-            ConnectionManager.close(statement,connection);
             e.printStackTrace();
             throw new RuntimeException(e);
+        }finally {
+            ConnectionManager.close(statement,connection);
         }
         return course;
     }

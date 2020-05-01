@@ -21,6 +21,7 @@ public class TaskManager {
         COMMANDS.put(CommandNames.SHOW_MAIN_MENU, new ShowMainMenuCommand());
         COMMANDS.put(CommandNames.SHOW_ALL_COURSES, new ShowAllCourses());
         COMMANDS.put(CommandNames.SHOW_FULL_COURSE, new ShowFullCourse());
+        COMMANDS.put(CommandNames.SHOW_USERS_FOR_ADMIN, new ShowUsersForAdmin());
     }
 
     public void impl(String commandName, Update update, StormNetBot source) throws TelegramApiException {
